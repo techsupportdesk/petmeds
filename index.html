@@ -99,10 +99,19 @@ body {
 
 /* status dot */
 .srow { display: flex; align-items: center; gap: 7px; margin-top: 10px; margin-bottom: 2px; }
-.sdot { width: 7px; height: 7px; border-radius: 50%; background: #666; flex-shrink: 0; transition: background 0.3s; }
-.sdot.ok { background: var(--green-accent); box-shadow: 0 0 5px rgba(92,158,80,0.5); }
-.sdot.er { background: #c04040; }
+.sdot { width: 10px; height: 10px; border-radius: 50%; background: #555; flex-shrink: 0; transition: background 0.4s; }
+.sdot.ok {
+  background: var(--green-accent);
+  box-shadow: 0 0 0 0 rgba(92,158,80,0.7);
+  animation: pulse-dot 2.4s ease-out infinite;
+}
+.sdot.er { background: #c04040; box-shadow: 0 0 6px rgba(192,64,64,0.6); }
 .stxt { font-size: 8px; color: rgba(160,190,155,0.65); letter-spacing: 0.08em; }
+@keyframes pulse-dot {
+  0%   { box-shadow: 0 0 0 0 rgba(92,158,80,0.7); }
+  60%  { box-shadow: 0 0 0 6px rgba(92,158,80,0); }
+  100% { box-shadow: 0 0 0 0 rgba(92,158,80,0); }
+}
 
 /* progress */
 .pbw { margin-top: 10px; background: rgba(255,255,255,0.1); border-radius: 4px; height: 3px; overflow: hidden; }
@@ -667,6 +676,22 @@ function doSm() {
   showToast('Schedule updated');
 }
 
+// ── ICS helpers ──────────────────────────────────────────────────────────────
+// Escape special chars in ICS TEXT values (RFC 5545 §3.3.11)
+function icsText(s) {
+  return ('' + s)
+    .replace(/\\/g, '\\\\')
+    .replace(/;/g,   '\\;')
+    .replace(/,/g,   '\\,')
+    .replace(/\n/g,  '\\n');
+}
+// Fold long ICS lines at 75 octets (RFC 5545 §3.1)
+function icsLine(s) {
+  var out = '';
+  while (s.length > 75) { out += s.slice(0, 75) + '\r\n '; s = s.slice(75); }
+  return out + s;
+}
+
 // ── ICS download ──────────────────────────────────────────────────────────────
 function doIcs(i) {
   var sc  = getScheduled(i);
@@ -675,20 +700,38 @@ function doIcs(i) {
   var now = new Date();
   var stamp = now.getUTCFullYear() + pad2(now.getUTCMonth()+1) + pad2(now.getUTCDate()) +
               'T' + pad2(now.getUTCHours()) + pad2(now.getUTCMinutes()) + pad2(now.getUTCSeconds()) + 'Z';
-  var lines = [
-    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//DewormingTracker//EN',
-    'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'BEGIN:VEVENT',
-    'UID:dw-' + num + '-' + dateToIcs(sc) + '@tracker',
+
+  var summary     = 'Deworming Dose ' + num + ' of ' + N;
+  var description = 'Administer deworming pill - dose ' + num + ' of ' + N +
+                    '\\nScheduled: ' + icsText(fmtShort(sc));
+
+  var props = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//DewormingTracker//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    'UID:dw-' + num + '-' + dateToIcs(sc) + '@dewormingtracker',
     'DTSTAMP:' + stamp,
     'DTSTART;VALUE=DATE:' + dateToIcs(sc),
     'DTEND;VALUE=DATE:'   + dateToIcs(nx),
-    'SUMMARY:Deworming Dose ' + num + ' of ' + N,
-    'DESCRIPTION:Administer deworming pill - dose ' + num + ' of ' + N + '.\\nScheduled: ' + fmtShort(sc),
-    'BEGIN:VALARM', 'TRIGGER:-PT12H', 'ACTION:DISPLAY',
-    'DESCRIPTION:Deworming dose ' + num + ' is tomorrow',
-    'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'
+    icsLine('SUMMARY:'     + icsText(summary)),
+    icsLine('DESCRIPTION:' + description),
+    'STATUS:CONFIRMED',
+    'SEQUENCE:0',
+    'TRANSP:TRANSPARENT',
+    'BEGIN:VALARM',
+    'TRIGGER;RELATED=START:-P1D',
+    'ACTION:DISPLAY',
+    icsLine('DESCRIPTION:Deworming dose ' + num + ' due tomorrow'),
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR'
   ];
-  var blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+
+  var ics  = props.join('\r\n');
+  var blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
   var url  = URL.createObjectURL(blob);
   var a    = document.createElement('a');
   a.href     = url;
@@ -697,7 +740,7 @@ function doIcs(i) {
   a.click();
   document.body.removeChild(a);
   setTimeout(function() { URL.revokeObjectURL(url); }, 600);
-  showToast('Dose ' + num + ' calendar event ready');
+  showToast('Dose ' + num + ' \u2014 open the downloaded .ics file to add to calendar');
 }
 
 // ── Export ────────────────────────────────────────────────────────────────────
