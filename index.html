@@ -4,148 +4,282 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Deworming Schedule</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:#1e3a1e;min-height:100vh;padding:20px 10px 48px;font-family:'Courier New',Courier,monospace;}
-.wrap{max-width:400px;margin:0 auto;}
-.card{background:#f5f0e8;border-radius:10px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,0.5);}
+:root {
+  --green-darkest: #1a2e1a;
+  --green-dark:    #1e3a1e;
+  --green-mid:     #2a4a2a;
+  --green-toolbar: #243d24;
+  --green-accent:  #5c9e50;
+  --green-light:   #8dc97e;
+  --green-pale:    #a8c9a0;
+  --cream:         #f5f0e8;
+  --ink:           #2a3a2a;
+  --font-serif:    'Cormorant Garamond', Georgia, serif;
+  --font-mono:     'DM Mono', 'Courier New', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* header */
-.hd{background:#1e3a1e;padding:16px 18px 14px;position:relative;overflow:hidden;}
-.hl{font-size:9px;letter-spacing:.18em;color:#7aab6e;text-transform:uppercase;margin-bottom:3px;}
-.ht{font-family:Georgia,serif;font-size:22px;font-weight:bold;color:#f0ede6;line-height:1.15;margin-bottom:9px;}
-.ht b{color:#8dc97e;font-weight:bold;}
-.hm{margin-bottom:8px;}
-.pill{display:inline-block;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:3px 10px;font-size:9px;color:#a8c9a0;margin-right:5px;margin-bottom:4px;}
-.spill{display:inline-block;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.22);border-radius:20px;padding:3px 10px;font-size:9px;color:#a8c9a0;cursor:pointer;margin-bottom:4px;}
-
-/* status row */
-.srow{margin-bottom:8px;font-size:9px;color:rgba(160,190,155,0.8);}
-
-.sdot {
-  display:inline-block;
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:#888;
-  margin-right:6px;
-  vertical-align:middle;
-  transition: all 0.2s ease;
+body {
+  background: var(--green-darkest);
+  min-height: 100vh;
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 24px 12px 56px;
+  font-family: var(--font-mono);
 }
 
-/* loading (yellow) */
-.ld {
-  background:#e0c040;
-  box-shadow:0 0 6px rgba(224,192,64,0.8);
+.card {
+  width: 100%; max-width: 400px;
+  background: var(--cream);
+  border-radius: 12px; overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.55);
 }
 
-/* success (green) */
-.ok {
-  background:#5c9e50;
-  box-shadow:0 0 6px rgba(92,158,80,0.8);
-  animation: pulse 2s infinite;
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.hd {
+  background: var(--green-dark);
+  padding: 18px 20px 14px;
+  position: relative; overflow: hidden;
+}
+.hd::before {
+  content: ''; position: absolute;
+  top: -32px; right: -32px;
+  width: 130px; height: 130px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.035);
+}
+.hd::after {
+  content: ''; position: absolute;
+  bottom: -20px; left: 30px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.02);
+}
+.hl {
+  font-family: var(--font-mono);
+  font-size: 8.5px; letter-spacing: 0.22em;
+  color: #6a9b5e; text-transform: uppercase; margin-bottom: 4px;
+}
+.ht {
+  font-family: var(--font-serif);
+  font-size: 28px; font-weight: 700;
+  color: #f0ede6; line-height: 1.08; margin-bottom: 11px;
+}
+.ht span { color: var(--green-light); }
+
+.hm { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.pill {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px; padding: 3px 11px;
+  font-size: 9px; color: var(--green-pale); letter-spacing: 0.06em;
+}
+.spill {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 20px; padding: 3px 8px 3px 11px;
+  font-size: 9px; color: var(--green-pale); letter-spacing: 0.06em;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+}
+.spill:active { background: rgba(255,255,255,0.18); }
+.eico {
+  width: 14px; height: 14px;
+  background: rgba(255,255,255,0.12); border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--green-light); flex-shrink: 0;
 }
 
-/* error (red) */
-.er {
-  background:#c04040;
-  box-shadow:0 0 6px rgba(192,64,64,0.8);
-}
-
-@keyframes pulse {
-  0%   { box-shadow:0 0 4px rgba(92,158,80,0.6); }
-  50%  { box-shadow:0 0 10px rgba(92,158,80,1); }
-  100% { box-shadow:0 0 4px rgba(92,158,80,0.6); }
-}
-
+/* status dot */
+.srow { display: flex; align-items: center; gap: 7px; margin-top: 10px; margin-bottom: 2px; }
+.sdot { width: 7px; height: 7px; border-radius: 50%; background: #666; flex-shrink: 0; transition: background 0.3s; }
+.sdot.ok { background: var(--green-accent); box-shadow: 0 0 5px rgba(92,158,80,0.5); }
+.sdot.er { background: #c04040; }
+.stxt { font-size: 8px; color: rgba(160,190,155,0.65); letter-spacing: 0.08em; }
 
 /* progress */
-.pbw{background:rgba(255,255,255,0.1);border-radius:3px;height:3px;overflow:hidden;margin-bottom:4px;}
-.pbf{height:3px;background:#5c9e50;border-radius:3px;}
-.plb{font-size:8px;color:rgba(160,190,155,0.7);overflow:hidden;}
-.plb span{float:right;}
+.pbw { margin-top: 10px; background: rgba(255,255,255,0.1); border-radius: 4px; height: 3px; overflow: hidden; }
+.pbf { height: 100%; background: linear-gradient(90deg, var(--green-accent), var(--green-light)); border-radius: 4px; transition: width 0.5s ease; }
+.plb { display: flex; justify-content: space-between; margin-top: 5px; font-size: 8px; color: rgba(160,190,155,0.65); letter-spacing: 0.07em; }
 
-/* toolbar */
-.tb{background:#243d24;padding:7px 10px;overflow:hidden;border-bottom:1px solid rgba(255,255,255,0.06);}
-.tbtn{display:inline-block;width:32%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:5px;padding:8px 2px;font-family:'Courier New',Courier,monospace;font-size:9px;color:#b8d8b0;cursor:pointer;text-transform:uppercase;text-align:center;vertical-align:top;}
-.tbtn+.tbtn{margin-left:1%;}
+/* ── Toolbar ──────────────────────────────────────────────────────────────── */
+.tb {
+  background: var(--green-toolbar);
+  padding: 8px 12px;
+  display: flex; gap: 7px;
+  border-bottom: 1px solid rgba(255,255,255,0.055);
+}
+.tbtn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px; padding: 8px 4px;
+  font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: 0.09em; color: #b8d8b0;
+  cursor: pointer; text-transform: uppercase;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.tbtn:active { background: rgba(255,255,255,0.16); }
+.tbtn svg { flex-shrink: 0; opacity: 0.8; }
 
-/* table */
-.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-table{width:100%;border-collapse:collapse;}
-thead th{background:#2a4a2a;color:#8dc97e;font-size:8px;font-weight:bold;letter-spacing:.1em;text-transform:uppercase;padding:7px 4px;text-align:left;}
-thead th:first-child{text-align:center;width:20px;}
-.thd{text-align:center;}
-.thc{text-align:center;width:32px;}
-tbody tr{border-bottom:1px solid rgba(0,0,0,0.07);}
-.re{background:rgba(0,0,0,0.025);}
-.dn{background:rgba(93,158,80,0.09);}
-td{padding:5px 4px;font-size:11px;color:#2a3a2a;}
-.dnsm{font-size:9px;color:#8aa080;font-weight:bold;}
-.sd{font-size:10px;color:#2a3a2a;white-space:nowrap;}
-.ss{font-size:10px;color:#3a6a30;white-space:nowrap;font-style:italic;}
-.ai{background:transparent;border:none;border-bottom:1.5px solid #c8d8c0;padding:2px 0;font-family:'Courier New',Courier,monospace;font-size:10px;color:#1e3a1e;width:100%;min-width:86px;outline:none;cursor:pointer;-webkit-appearance:none;}
-.ai:focus{border-bottom-color:#5c9e50;}
-.dlt{font-size:10px;font-weight:bold;border-radius:9px;padding:2px 4px;display:inline-block;min-width:26px;text-align:center;}
-.dz{color:#2a6a20;background:rgba(80,158,60,0.15);}
-.de{color:#1a50a0;background:rgba(50,120,200,0.13);}
-.dm{color:#8a5800;background:rgba(200,140,0,0.13);}
-.dw{color:#8a1a10;background:rgba(180,50,30,0.12);}
-.cb{display:inline-block;width:24px;height:24px;background:rgba(93,158,80,0.12);border:1px solid rgba(93,158,80,0.3);border-radius:4px;cursor:pointer;color:#3a6a30;text-align:center;padding:0;vertical-align:middle;}
+/* ── Table ────────────────────────────────────────────────────────────────── */
+.tw { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  background: var(--green-mid); color: var(--green-light);
+  font-family: var(--font-mono);
+  font-size: 7.5px; font-weight: 500; letter-spacing: 0.15em;
+  text-transform: uppercase; padding: 8px 7px; text-align: left;
+  position: sticky; top: 0; z-index: 1;
+}
+thead th:first-child { text-align: center; width: 24px; }
+.thd { text-align: center; }
+.thc { text-align: center; width: 36px; }
 
-/* banners */
-.br{background:#fffbea;}
-.bru{background:#fff0f0;}
-.br td,.bru td{padding:0;}
-.bn{padding:8px 10px;overflow:hidden;}
-.bm{font-size:9.5px;line-height:1.5;margin-bottom:6px;}
-.bc .bm{color:#7a5a00;}
-.bru .bm{color:#7a2a10;}
-.bm strong{color:#4a3800;}
-.bru .bm strong{color:#5a1a08;}
-.bbtn{display:inline-block;border-radius:4px;padding:5px 10px;font-family:'Courier New',Courier,monospace;font-size:9px;cursor:pointer;margin-right:5px;border:none;}
-.by{background:#3a6a2a;color:#e8f4e0;}
-.bun{background:#7a2a10;color:#fdf0ec;}
-.bno{background:transparent;color:#9a8050;border:1px solid #d0b060;}
+tbody tr { border-bottom: 1px solid rgba(0,0,0,0.065); transition: background 0.1s; }
+.re  { background: rgba(0,0,0,0.022); }
+.dn  { background: rgba(93,158,80,0.09) !important; }
 
-/* footer */
-.ft{background:#1e3a1e;padding:9px 14px;overflow:hidden;}
-.fn{font-size:8px;color:rgba(140,190,130,0.55);letter-spacing:.1em;text-transform:uppercase;}
+td { padding: 6px 7px; font-size: 11px; color: var(--ink); }
+.dnsm { font-size: 9px; color: #8aa080; font-weight: 500; }
+.sd { font-size: 10px; color: var(--ink); white-space: nowrap; }
+.ss { font-size: 10px; color: #3a6a30; white-space: nowrap; font-style: italic; }
 
-/* warning bar */
-.nbar{background:#fffbea;border-top:1px solid #e8e0c8;padding:6px 12px;font-size:9px;color:#7a6020;text-align:center;display:none;}
+.ai {
+  background: transparent; border: none;
+  border-bottom: 1.5px solid #c8d8c0;
+  padding: 2px 0;
+  font-family: var(--font-mono);
+  font-size: 10px; color: #1a2a1a;
+  width: 100%; min-width: 88px; outline: none; cursor: pointer;
+  -webkit-appearance: none; transition: border-color 0.2s;
+}
+.ai:focus { border-bottom-color: var(--green-accent); }
+.ai::-webkit-calendar-picker-indicator { opacity: 0.35; width: 12px; height: 12px; cursor: pointer; }
 
-/* toast */
-#toast{position:fixed;bottom:26px;left:10%;right:10%;text-align:center;background:#1e3a1e;color:#8dc97e;border:1px solid #3a6a2a;border-radius:18px;padding:7px 18px;font-size:11px;box-shadow:0 5px 20px rgba(0,0,0,0.4);display:none;z-index:500;}
-#toast.er{background:#3a1e1e;color:#e08080;border-color:#6a3030;}
+.dlt { font-size: 10px; font-weight: 500; border-radius: 11px; padding: 2px 6px; display: inline-block; min-width: 30px; text-align: center; }
+.dz { color: #2a6a20; background: rgba(80,158,60,0.15); }
+.de { color: #1a50a0; background: rgba(50,120,200,0.13); }
+.dm { color: #8a5800; background: rgba(200,140,0,0.13); }
+.dw { color: #8a1a10; background: rgba(180,50,30,0.12); }
 
-/* modals */
-.overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.65);z-index:300;padding:18px;}
-.overlay.open{display:block;}
-.mo{background:#f5f0e8;border-radius:9px;padding:22px 18px;max-width:290px;margin:60px auto 0;}
-.mo h2{font-family:Georgia,serif;font-size:19px;color:#1e3a1e;margin-bottom:7px;}
-.mo p{font-size:11px;color:#4a5a4a;line-height:1.7;margin-bottom:12px;}
-.mo p strong{color:#1e3a1e;}
-.mbtn{display:inline-block;border-radius:5px;padding:10px;font-family:'Courier New',Courier,monospace;font-size:10px;cursor:pointer;border:none;width:48%;}
-.bsv{background:#2a5a20;color:#e8f4e0;}
-.bcf{background:#8a2010;color:#fff;}
-.bcl{background:transparent;color:#4a5a4a;border:1px solid #c0c8b8;}
-.df{width:100%;background:#eee8dc;border:1px solid #c8cfc0;border-radius:5px;padding:8px 9px;font-family:'Courier New',Courier,monospace;font-size:12px;color:#1e3a1e;outline:none;margin-bottom:9px;-webkit-appearance:none;}
-.wb{background:#fff4e0;border:1px solid #e8c060;border-radius:5px;padding:7px 9px;font-size:10px;color:#7a5000;line-height:1.5;margin-bottom:12px;display:none;}
-.wb.on{display:block;}
+/* calendar button */
+.cb {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px;
+  background: rgba(93,158,80,0.12);
+  border: 1px solid rgba(93,158,80,0.28);
+  border-radius: 5px; cursor: pointer; color: #3a6a30; padding: 0;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.cb:active { background: rgba(93,158,80,0.3); }
 
-#ps{display:none;text-align:center;font-size:8px;color:#999;padding:7px;}
-@media print{
-  @page{size:A5 portrait;margin:13mm 11mm;}
-  body{background:white!important;padding:0!important;}
-  .wrap{max-width:100%!important;}
-  .card{box-shadow:none!important;border-radius:0!important;}
-  .tb,.thc,.tdc,.overlay,#toast,.nbar,.srow{display:none!important;}
-  .hd,thead th,.pbf{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-  .dlt{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-  .ai{border-bottom:1px solid #bbb!important;}
-  tbody tr{page-break-inside:avoid;}
-  #ps{display:block!important;}
+/* ── Cascade / undo banners ───────────────────────────────────────────────── */
+.br td, .bru td { padding: 0 !important; }
+.br td { border-bottom: 2px solid #e8d060 !important; }
+.bru td { border-bottom: 2px solid #f0a090 !important; }
+.bn { display: flex; align-items: center; justify-content: space-between; padding: 9px 13px; gap: 8px; flex-wrap: wrap; }
+.bc { background: #fffbea; }
+.buu { background: #fff0f0; }
+.bm { font-size: 9.5px; line-height: 1.55; flex: 1; min-width: 130px; }
+.bc .bm { color: #7a5a00; }
+.buu .bm { color: #7a2a10; }
+.bm strong { color: #4a3800; }
+.buu .bm strong { color: #5a1a08; }
+.ba { display: flex; gap: 6px; }
+.by  { background: #3a6a2a; color: #e8f4e0; border: none; border-radius: 5px; padding: 6px 13px; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.06em; cursor: pointer; }
+.bun { background: #7a2a10; color: #fdf0ec; border: none; border-radius: 5px; padding: 6px 13px; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.06em; cursor: pointer; }
+.bno { background: transparent; color: #9a8050; border: 1px solid #d0b060; border-radius: 5px; padding: 6px 9px; font-family: var(--font-mono); font-size: 9px; cursor: pointer; }
+
+/* ── Warning bar ──────────────────────────────────────────────────────────── */
+.nbar {
+  background: #fffbea; border-top: 1px solid #e8e0c8;
+  padding: 6px 14px; font-size: 9px; color: #7a6020;
+  text-align: center; display: none;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+.ft {
+  background: var(--green-dark); padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.fn { font-size: 8px; color: rgba(140,190,130,0.5); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ── Toast ────────────────────────────────────────────────────────────────── */
+#toast {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--green-dark); color: var(--green-light);
+  border: 1px solid #3a6a2a; border-radius: 20px;
+  padding: 8px 20px; font-size: 11px; letter-spacing: 0.07em;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.45);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.22s, transform 0.22s;
+  z-index: 500; white-space: nowrap;
+}
+#toast.on  { opacity: 1; transform: translateX(-50%) translateY(0); }
+#toast.er  { background: #3a1e1e; color: #e08080; border-color: #6a3030; }
+
+/* ── Modals ───────────────────────────────────────────────────────────────── */
+.overlay {
+  display: none; position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.68);
+  align-items: center; justify-content: center;
+  z-index: 300; padding: 20px;
+}
+.overlay.open { display: flex; }
+.mo {
+  background: var(--cream); border-radius: 11px;
+  padding: 24px 20px; max-width: 300px; width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+}
+.mo h2 {
+  font-family: var(--font-serif);
+  font-size: 21px; font-weight: 700;
+  color: var(--green-dark); margin-bottom: 8px;
+}
+.mo p { font-size: 11px; color: #4a5a4a; line-height: 1.75; margin-bottom: 14px; }
+.mo p strong { color: var(--green-dark); }
+.mrow { display: flex; gap: 8px; }
+.bsv { flex: 1; background: #2a5a20; color: #e8f4e0; border: none; border-radius: 6px; padding: 10px; font-family: var(--font-mono); font-size: 10px; cursor: pointer; letter-spacing: 0.07em; }
+.bcf { flex: 1; background: #8a2010; color: #fff;    border: none; border-radius: 6px; padding: 10px; font-family: var(--font-mono); font-size: 10px; cursor: pointer; letter-spacing: 0.07em; }
+.bcl { flex: 1; background: transparent; color: #4a5a4a; border: 1px solid #c0c8b8; border-radius: 6px; padding: 10px; font-family: var(--font-mono); font-size: 10px; cursor: pointer; }
+.df {
+  width: 100%; background: #ece6d8;
+  border: 1px solid #c8cfc0; border-radius: 6px;
+  padding: 9px 10px; font-family: var(--font-mono);
+  font-size: 12px; color: #1e3a1e; outline: none;
+  margin-bottom: 10px; -webkit-appearance: none;
+  transition: border-color 0.2s;
+}
+.df:focus { border-color: var(--green-accent); }
+.wb {
+  background: #fff4e0; border: 1px solid #e8c060;
+  border-radius: 6px; padding: 8px 10px;
+  font-size: 10px; color: #7a5000; line-height: 1.55;
+  margin-bottom: 14px; display: none;
+}
+.wb.on { display: block; }
+
+/* ── Print ────────────────────────────────────────────────────────────────── */
+#ps { display: none; text-align: center; font-size: 8px; color: #aaa; padding: 8px; letter-spacing: 0.1em; }
+
+@media print {
+  @page { size: A5 portrait; margin: 13mm 11mm; }
+  body  { background: white !important; padding: 0 !important; display: block !important; }
+  .card { max-width: 100% !important; box-shadow: none !important; border-radius: 0 !important; }
+  .tb, .thc, .tdc, .overlay, #toast, .nbar, .srow { display: none !important; }
+  .hd, thead th, .pbf { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .dlt { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .eico { display: none !important; }
+  .ai  { border-bottom: 1px solid #bbb !important; }
+  tbody tr { break-inside: avoid; }
+  #ps  { display: block !important; }
 }
 </style>
 </head>
@@ -158,9 +292,10 @@ td{padding:5px 4px;font-size:11px;color:#2a3a2a;}
   <div class="mo">
     <h2>Restore Backup?</h2>
     <p id="ib"></p>
-    <button class="mbtn bcl" onclick="closeIm()">Cancel</button>
-    &nbsp;
-    <button class="mbtn bcf" onclick="doIm()">Yes, restore</button>
+    <div class="mrow">
+      <button class="bcl" onclick="closeIm()">Cancel</button>
+      <button class="bcf" onclick="doIm()">Yes, restore</button>
+    </div>
   </div>
 </div>
 
@@ -170,63 +305,83 @@ td{padding:5px 4px;font-size:11px;color:#2a3a2a;}
     <h2>Set Start Date</h2>
     <p>Enter the date of the <strong>first dose</strong>. All 21 scheduled dates will be calculated from this point, 5 weeks apart.</p>
     <input type="date" id="sdi" class="df">
-    <div class="wb" id="sw">Warning: You have recorded doses. Changing the start date will reset all recorded actuals and cascade history. This cannot be undone.</div>
-    <button class="mbtn bcl" onclick="closeSm()">Cancel</button>
-    &nbsp;
-    <button class="mbtn bsv" onclick="doSm()">Set Date</button>
+    <div class="wb" id="sw">&#9888;&nbsp; You have recorded doses. Changing the start date will <strong>reset all recorded actuals and cascade history</strong>. This cannot be undone.</div>
+    <div class="mrow">
+      <button class="bcl" onclick="closeSm()">Cancel</button>
+      <button class="bsv" onclick="doSm()">Set Date</button>
+    </div>
   </div>
 </div>
 
-<div class="wrap">
 <div class="card">
 
-<div class="hd">
-  <div class="hl">Canine Health Record</div>
-  <div class="ht">Deworming<br><b>Schedule</b></div>
-  <div class="hm">
-    <span class="pill">Every 5 weeks</span>
-    <span class="spill" onclick="openSm()" id="sl">Started --  [edit]</span>
+  <div class="hd">
+    <div class="hl">Canine Health Record</div>
+    <div class="ht">Deworming<br><span>Schedule</span></div>
+    <div class="hm">
+      <span class="pill">Every 5 weeks</span>
+      <span class="spill" onclick="openSm()">
+        <span id="sl">Started --</span>
+        <span class="eico">
+          <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        </span>
+      </span>
+    </div>
+    <div class="srow">
+      <div class="sdot" id="sdot"></div>
+      <span class="stxt" id="stxt">Loading...</span>
+    </div>
+    <div class="pbw"><div class="pbf" id="pf" style="width:0%"></div></div>
+    <div class="plb"><span id="pt">0 of 21 doses recorded</span><span id="pp">0%</span></div>
   </div>
-  <div class="srow">
-    <span class="sdot ld" id="sdot"></span>
-    <span id="stxt">Loading...</span>
+
+  <div class="tb">
+    <button class="tbtn" onclick="doExp()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export
+    </button>
+    <button class="tbtn" onclick="document.getElementById('fi').click()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Import
+    </button>
+    <button class="tbtn" onclick="window.print()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print / PDF
+    </button>
   </div>
-  <div class="pbw"><div class="pbf" id="pf" style="width:0%"></div></div>
-  <div class="plb" id="plb">0 of 21 doses recorded <span>0%</span></div>
-</div>
 
-<div class="tb">
-  <button class="tbtn" onclick="doExp()">Export</button>
-  <button class="tbtn" onclick="document.getElementById('fi').click()">Import</button>
-  <button class="tbtn" onclick="window.print()">Print/PDF</button>
-</div>
+  <div class="tw">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Scheduled Date</th>
+          <th>Actual Date</th>
+          <th class="thd">&#916; Days</th>
+          <th class="thc">Cal</th>
+        </tr>
+      </thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </div>
 
-<div class="tw">
-<table>
-<thead>
-  <tr>
-    <th>#</th>
-    <th>Scheduled Date</th>
-    <th>Actual Date</th>
-    <th class="thd">Delta</th>
-    <th class="thc">Cal</th>
-  </tr>
-</thead>
-<tbody id="tb"></tbody>
-</table>
-</div>
+  <div class="nbar" id="nb">&#9888;&nbsp; Auto-save unavailable on this device. Use <strong>Export</strong> before closing.</div>
+  <div id="ps"></div>
 
-<div class="nbar" id="nb">Warning: Auto-save unavailable. Use Export before closing.</div>
-<div id="ps"></div>
-<div class="ft"><span class="fn">* adjusted &nbsp;|&nbsp; Cal = add to calendar</span></div>
+  <div class="ft">
+    <span class="fn">&#10022; adjusted &nbsp;&middot;&nbsp; Cal = add to calendar</span>
+    <span style="font-size:14px;opacity:0.5">&#128062;</span>
+  </div>
 
-</div><!-- card -->
-</div><!-- wrap -->
+</div><!-- .card -->
 
 <div id="toast"></div>
 
 <script>
-// ── Storage ───────────────────────────────────────────────────────────────────
+// ── Safe localStorage wrapper ─────────────────────────────────────────────────
 var _mem = {};
 var _ls  = false;
 try {
@@ -244,7 +399,7 @@ function sSet(k, v) {
   _mem[k] = v;
 }
 
-// ── App state ─────────────────────────────────────────────────────────────────
+// ── Constants & state ─────────────────────────────────────────────────────────
 var N  = 21;
 var IV = 35;
 var SK = 'dw-v5';
@@ -268,7 +423,7 @@ function makeArr(v) {
   return a;
 }
 
-// ── Date utilities ────────────────────────────────────────────────────────────
+// ── Date helpers ──────────────────────────────────────────────────────────────
 var MSHT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var MLNG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
@@ -344,16 +499,15 @@ function showToast(msg, isErr) {
   var el = document.getElementById('toast');
   if (!el) return;
   el.textContent = msg;
-  el.className = isErr ? 'er' : '';
-  el.style.display = 'block';
+  el.className = isErr ? 'on er' : 'on';
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function() { el.style.display = 'none'; }, 3000);
+  toastTimer = setTimeout(function() { el.className = ''; }, 3200);
 }
 
 // ── Render ────────────────────────────────────────────────────────────────────
 function render() {
   var slEl = document.getElementById('sl');
-  if (slEl) slEl.textContent = 'Started ' + fmtShort(gSd) + '  [edit]';
+  if (slEl) slEl.textContent = 'Started ' + fmtShort(gSd);
 
   var tbody = document.getElementById('tb');
   if (!tbody) return;
@@ -361,21 +515,19 @@ function render() {
   var done = 0;
   for (var k = 0; k < N; k++) { if (gAct[k]) done++; }
 
-  var html = '';
+  var html   = '';
   var rowNum = 0;
 
   for (var i = 0; i < N; i++) {
-    var sched  = getScheduled(i);
-    var actual = gAct[i];
-    var delta  = calcDelta(sched, actual);
+    var sched   = getScheduled(i);
+    var actual  = gAct[i];
+    var delta   = calcDelta(sched, actual);
     var shifted = (gOff[i] !== 0);
     var isDone  = (actual !== '');
     var isEven  = (rowNum % 2 === 0);
     rowNum++;
 
-    var trClass = '';
-    if (isDone) trClass = 'dn';
-    else if (isEven) trClass = 're';
+    var trClass = isDone ? 'dn' : (isEven ? 're' : '');
 
     var badge = '';
     if (delta !== null) {
@@ -384,15 +536,19 @@ function render() {
     }
 
     var schedClass = shifted ? 'ss' : 'sd';
-    var schedMark  = shifted ? ' *' : '';
+    var schedMark  = shifted ? ' &#10022;' : '';
 
     html += '<tr class="' + trClass + '">';
     html += '<td style="text-align:center"><span class="dnsm">' + (i + 1) + '</span></td>';
     html += '<td><span class="' + schedClass + '">' + fmtShort(sched) + schedMark + '</span></td>';
     html += '<td><input class="ai" type="date" value="' + actual + '" data-i="' + i + '" onchange="onDateChange(this)"></td>';
     html += '<td style="text-align:center">' + badge + '</td>';
-    html += '<td class="tdc" style="text-align:center"><button class="cb" onclick="doIcs(' + i + ')">&#128197;</button></td>';
-    html += '</tr>';
+    html += '<td class="tdc" style="text-align:center">';
+    html += '<button class="cb" onclick="doIcs(' + i + ')" title="Add dose ' + (i+1) + ' to calendar">';
+    html += '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
+    html += '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>';
+    html += '<line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>';
+    html += '</svg></button></td></tr>';
 
     // Cascade prompt
     if (gCi === i && delta !== null) {
@@ -401,8 +557,8 @@ function render() {
       var word = (net > 0) ? 'later' : 'earlier';
       html += '<tr class="br"><td colspan="5"><div class="bn bc">';
       html += '<div class="bm">Dose ' + (i+1) + ' shifts the next dose <strong>' + sign + net + 'd</strong> ' + word + '.<br>Update all future scheduled dates?</div>';
-      html += '<button class="bbtn by" onclick="doCascade(' + i + ')">Yes, update</button>';
-      html += '<button class="bbtn bno" onclick="dismissPrompt()">Keep dates</button>';
+      html += '<div class="ba"><button class="by" onclick="doCascade(' + i + ')">Yes, update</button>';
+      html += '<button class="bno" onclick="dismissPrompt()">Keep dates</button></div>';
       html += '</div></td></tr>';
     }
 
@@ -410,10 +566,10 @@ function render() {
     if (gUi === i) {
       var prev = gCds[i];
       var ps   = (prev > 0) ? '+' : '';
-      html += '<tr class="bru"><td colspan="5"><div class="bn">';
-      html += '<div class="bm" style="color:#7a2a10">Date cleared. A <strong style="color:#5a1a08">' + ps + prev + 'd</strong> shift was applied to future dates.<br>Undo that shift?</div>';
-      html += '<button class="bbtn bun" onclick="doUndo(' + i + ')">Undo shift</button>';
-      html += '<button class="bbtn bno" onclick="dismissPrompt()">Keep dates</button>';
+      html += '<tr class="bru"><td colspan="5"><div class="bn buu">';
+      html += '<div class="bm">Date cleared. A <strong>' + ps + prev + 'd</strong> shift was applied to future dates.<br>Undo that shift?</div>';
+      html += '<div class="ba"><button class="bun" onclick="doUndo(' + i + ')">Undo shift</button>';
+      html += '<button class="bno" onclick="dismissPrompt()">Keep dates</button></div>';
       html += '</div></td></tr>';
     }
   }
@@ -422,14 +578,16 @@ function render() {
 
   var pct = Math.round((done / N) * 100);
   var pf  = document.getElementById('pf');
-  var plb = document.getElementById('plb');
+  var pt  = document.getElementById('pt');
+  var pp  = document.getElementById('pp');
   var ps  = document.getElementById('ps');
-  if (pf)  pf.style.width = pct + '%';
-  if (plb) plb.innerHTML  = done + ' of ' + N + ' doses recorded <span>' + pct + '%</span>';
-  if (ps)  ps.textContent = 'Printed ' + fmtLong(new Date());
+  if (pf) pf.style.width      = pct + '%';
+  if (pt) pt.textContent      = done + ' of ' + N + ' doses recorded';
+  if (pp) pp.textContent      = pct + '%';
+  if (ps) ps.textContent      = 'Printed ' + fmtLong(new Date());
 }
 
-// ── Handlers ──────────────────────────────────────────────────────────────────
+// ── Date input change ─────────────────────────────────────────────────────────
 function onDateChange(input) {
   var i = parseInt(input.getAttribute('data-i'), 10);
   var v = input.value;
@@ -447,6 +605,7 @@ function onDateChange(input) {
   render();
 }
 
+// ── Cascade ───────────────────────────────────────────────────────────────────
 function doCascade(fi) {
   var d = calcDelta(getScheduled(fi), gAct[fi]);
   if (d === null) return;
@@ -491,19 +650,19 @@ function doSm() {
   if (!sdi || !sdi.value) { showToast('Please choose a date', true); return; }
   var nd = parseDate(sdi.value);
   if (!nd) { showToast('Invalid date', true); return; }
-  gSd = nd;
+  gSd  = nd;
   gAct = makeArr('');
   gOff = makeArr(0);
   gCds = makeArr(0);
-  gCi = -1;
-  gUi = -1;
+  gCi  = -1;
+  gUi  = -1;
   saveState();
   closeSm();
   render();
   showToast('Schedule updated');
 }
 
-// ── ICS ───────────────────────────────────────────────────────────────────────
+// ── ICS download ──────────────────────────────────────────────────────────────
 function doIcs(i) {
   var sc  = getScheduled(i);
   var nx  = datePlus(sc, 1);
@@ -519,13 +678,12 @@ function doIcs(i) {
     'DTSTART;VALUE=DATE:' + dateToIcs(sc),
     'DTEND;VALUE=DATE:'   + dateToIcs(nx),
     'SUMMARY:Deworming Dose ' + num + ' of ' + N,
-    'DESCRIPTION:Administer deworming pill - dose ' + num + '.\\nScheduled: ' + fmtShort(sc),
+    'DESCRIPTION:Administer deworming pill - dose ' + num + ' of ' + N + '.\\nScheduled: ' + fmtShort(sc),
     'BEGIN:VALARM', 'TRIGGER:-PT12H', 'ACTION:DISPLAY',
     'DESCRIPTION:Deworming dose ' + num + ' is tomorrow',
     'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'
   ];
-  var content = lines.join('\r\n');
-  var blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
+  var blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
   var url  = URL.createObjectURL(blob);
   var a    = document.createElement('a');
   a.href     = url;
@@ -542,12 +700,10 @@ function doExp() {
   var data = {
     app: 'DewormingTracker', version: '1.3',
     exportedAt: new Date().toISOString(),
-    startDate: dateToStr(gSd),
-    intervalDays: IV,
+    startDate: dateToStr(gSd), intervalDays: IV,
     actuals: gAct, offsets: gOff, cascadedDeltas: gCds
   };
-  var json = JSON.stringify(data, null, 2);
-  var blob = new Blob([json], { type: 'application/json' });
+  var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   var url  = URL.createObjectURL(blob);
   var a    = document.createElement('a');
   a.href     = url;
@@ -571,11 +727,9 @@ function doIm() {
   gOff = gPi.offsets;
   gCds = (Array.isArray(gPi.cascadedDeltas) && gPi.cascadedDeltas.length === N) ? gPi.cascadedDeltas : makeArr(0);
   var x = gPi.startDate ? parseDate(gPi.startDate) : null;
-  gSd = x ? x : parseDate(DS);
-  gCi = -1; gUi = -1;
-  saveState();
-  closeIm();
-  render();
+  gSd  = x ? x : parseDate(DS);
+  gCi  = -1; gUi = -1;
+  saveState(); closeIm(); render();
   showToast('Backup restored');
 }
 
@@ -598,9 +752,7 @@ document.getElementById('fi').addEventListener('change', function(e) {
           'Start date: <strong>' + (p.startDate || 'unknown') + '</strong><br>' +
           cnt + ' doses recorded. Cannot be undone.';
         document.getElementById('im').className = 'overlay open';
-      } else {
-        showToast('Invalid backup file', true);
-      }
+      } else { showToast('Invalid backup file', true); }
     } catch(err) { showToast('Could not read file', true); }
   };
   reader.readAsText(file);
@@ -613,8 +765,8 @@ try {
   render();
   var dotEl  = document.getElementById('sdot');
   var stxtEl = document.getElementById('stxt');
-  if (dotEl)  dotEl.className  = 'sdot ok';
-  if (stxtEl) stxtEl.textContent = _ls ? 'Ready  -  Auto-save on' : 'Ready  -  Export to save data';
+  if (dotEl)  dotEl.className    = 'sdot ok';
+  if (stxtEl) stxtEl.textContent = _ls ? 'Ready  \u00b7  Auto-save on' : 'Ready  \u00b7  Export to save data';
   if (!_ls) {
     var nbEl = document.getElementById('nb');
     if (nbEl) nbEl.style.display = 'block';
@@ -622,7 +774,7 @@ try {
 } catch(bootErr) {
   var dotEl  = document.getElementById('sdot');
   var stxtEl = document.getElementById('stxt');
-  if (dotEl)  dotEl.className  = 'sdot er';
+  if (dotEl)  dotEl.className    = 'sdot er';
   if (stxtEl) stxtEl.textContent = 'Error: ' + bootErr.message;
 }
 </script>
