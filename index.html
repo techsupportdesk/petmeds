@@ -610,7 +610,7 @@ function render() {
     html += '<tr class="' + trClass + '">';
     html += '<td style="text-align:center"><span class="dnsm">' + (i + 1) + '</span></td>';
     html += '<td><span class="' + schedClass + '">' + fmtShort(sched) + schedMark + '</span></td>';
-    html += '<td><input class="ai" type="date" value="' + actual + '" data-i="' + i + '" onchange="onDateChange(this)"></td>';
+    html += '<td><input class="ai" type="date" value="' + actual + '" data-i="' + i + '" onblur="onDateChange(this)"></td>';
     html += '<td style="text-align:center">' + badge + '</td>';
     html += '<td class="tdc" style="text-align:center">';
     html += '<button class="cb" onclick="doIcs(' + i + ')" title="Add dose ' + (i+1) + ' to calendar">';
