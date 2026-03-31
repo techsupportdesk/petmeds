@@ -64,7 +64,7 @@ body {
 .hl {
   font-family: var(--font-mono);
   font-size: 8.5px; letter-spacing: 0.22em;
-  color: #6a9b5e; text-transform: uppercase; margin-bottom: 4px;
+  color: #90c47e; text-transform: uppercase; margin-bottom: 4px;
 }
 .ht {
   font-family: var(--font-serif);
@@ -106,7 +106,7 @@ body {
   animation: pulse-dot 2.4s ease-out infinite;
 }
 .sdot.er { background: #c04040; box-shadow: 0 0 6px rgba(192,64,64,0.6); }
-.stxt { font-size: 8px; color: rgba(160,190,155,0.65); letter-spacing: 0.08em; }
+.stxt { font-size: 8px; color: rgba(185,215,175,0.92); letter-spacing: 0.08em; }
 @keyframes pulse-dot {
   0%   { box-shadow: 0 0 0 0 rgba(92,158,80,0.7); }
   60%  { box-shadow: 0 0 0 6px rgba(92,158,80,0); }
@@ -116,7 +116,7 @@ body {
 /* progress */
 .pbw { margin-top: 10px; background: rgba(255,255,255,0.1); border-radius: 4px; height: 3px; overflow: hidden; }
 .pbf { height: 100%; background: linear-gradient(90deg, var(--green-accent), var(--green-light)); border-radius: 4px; transition: width 0.5s ease; }
-.plb { display: flex; justify-content: space-between; margin-top: 5px; font-size: 8px; color: rgba(160,190,155,0.65); letter-spacing: 0.07em; }
+.plb { display: flex; justify-content: space-between; margin-top: 5px; font-size: 8px; color: rgba(185,215,175,0.92); letter-spacing: 0.07em; }
 
 /* ── Toolbar ──────────────────────────────────────────────────────────────── */
 .tb {
@@ -221,7 +221,7 @@ td { padding: 6px 7px; font-size: 11px; color: var(--ink); }
   background: var(--green-dark); padding: 10px 16px;
   display: flex; align-items: center; justify-content: space-between;
 }
-.fn { font-size: 8px; color: rgba(140,190,130,0.5); letter-spacing: 0.1em; text-transform: uppercase; }
+.fn { font-size: 8px; color: rgba(165,210,155,0.85); letter-spacing: 0.1em; text-transform: uppercase; }
 
 /* ── Toast ────────────────────────────────────────────────────────────────── */
 #toast {
@@ -281,19 +281,74 @@ td { padding: 6px 7px; font-size: 11px; color: var(--ink); }
 .wb.on { display: block; }
 
 /* ── Print ────────────────────────────────────────────────────────────────── */
-#ps { display: none; text-align: center; font-size: 8px; color: #aaa; padding: 8px; letter-spacing: 0.1em; }
+#ps { display: none; text-align: center; font-size: 7px; color: #aaa; padding: 4px; letter-spacing: 0.1em; }
 
 @media print {
-  @page { size: A5 portrait; margin: 13mm 11mm; }
-  body  { background: white !important; padding: 0 !important; display: block !important; }
-  .card { max-width: 100% !important; box-shadow: none !important; border-radius: 0 !important; }
-  .tb, .thc, .tdc, .overlay, #toast, .nbar, .srow { display: none !important; }
-  .hd, thead th, .pbf { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  .dlt { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  .eico { display: none !important; }
-  .ai  { border-bottom: 1px solid #bbb !important; }
+  /* Target a small card — ~passport width, taller to fit 16 rows.
+     Browsers that honour @page size will produce a compact PDF.
+     For those that don't, instruct user to choose "Fit to page" or 50-60% scale. */
+  @page {
+    size: 105mm 200mm portrait;
+    margin: 7mm 7mm 7mm 7mm;
+  }
+
+  /* ── Reset layout ── */
+  body {
+    background: white !important;
+    padding: 0 !important;
+    display: block !important;
+    font-size: 10px !important;
+  }
+  .card {
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* ── Hide screen-only elements ── */
+  .tb, .thc, .tdc, .overlay, #toast, .nbar,
+  .srow, .hd::before, .hd::after,
+  .eico, .pbw, .plb { display: none !important; }
+
+  /* ── Compress header ── */
+  .hd {
+    padding: 8px 10px 7px !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .hl { font-size: 7px !important; margin-bottom: 2px !important; }
+  .ht { font-size: 17px !important; margin-bottom: 6px !important; }
+  .hm { gap: 5px !important; }
+  .pill, .spill { font-size: 7.5px !important; padding: 2px 8px !important; }
+
+  /* ── Compress table ── */
+  thead th {
+    font-size: 7px !important;
+    padding: 5px 5px !important;
+    letter-spacing: 0.1em !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
   tbody tr { break-inside: avoid; }
-  #ps  { display: block !important; }
+  td { padding: 4px 5px !important; font-size: 9px !important; }
+  .dnsm { font-size: 8px !important; }
+  .sd, .ss { font-size: 8.5px !important; }
+  .dlt {
+    font-size: 8px !important; padding: 1px 4px !important;
+    min-width: 22px !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .ai {
+    font-size: 8.5px !important;
+    border-bottom: 0.75px solid #bbb !important;
+    min-width: 70px !important;
+  }
+
+  /* ── Footer & stamp ── */
+  .ft { padding: 5px 10px !important; }
+  .fn { font-size: 7px !important; }
+  #ps { display: block !important; font-size: 7px !important; padding: 3px !important; }
 }
 </style>
 </head>
@@ -317,7 +372,7 @@ td { padding: 6px 7px; font-size: 11px; color: var(--ink); }
 <div id="sm" class="overlay">
   <div class="mo">
     <h2>Set Start Date</h2>
-    <p>Enter the date of the <strong>first dose</strong>. All 21 scheduled dates will be calculated from this point, 5 weeks apart.</p>
+    <p>Enter the date of the <strong>first dose</strong>. All 16 scheduled dates will be calculated from this point, 5 weeks apart.</p>
     <input type="date" id="sdi" class="df">
     <div class="wb" id="sw">&#9888;&nbsp; You have recorded doses. Changing the start date will <strong>reset all recorded actuals and cascade history</strong>. This cannot be undone.</div>
     <div class="mrow">
@@ -414,7 +469,7 @@ function sSet(k, v) {
 }
 
 // ── Constants & state ─────────────────────────────────────────────────────────
-var N  = 21;
+var N  = 16;
 var IV = 35;
 var SK = 'dw-v5';
 var DS = '2026-03-28';
